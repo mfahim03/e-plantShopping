@@ -1,7 +1,5 @@
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { addToCart, selectCartCount } from './CartSlice.jsx';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem, selectAddedToCart, selectCartCount } from './CartSlice.jsx';
 
 const categories = [
   { name: 'Leafy favourites', plants: [
@@ -30,35 +28,36 @@ const categories = [
   ]},
 ];
 
-function Navbar() {
+function Navbar({ onHomeClick, onPlantsClick, onCartClick }) {
   const count = useSelector(selectCartCount);
   return <nav className="site-nav" aria-label="Main navigation">
-    <Link className="brand" to="/">Paradise Nursery<small>Grow at home</small></Link>
-    <div className="nav-links"><Link to="/">Home</Link><Link to="/plants">Plants</Link><Link className="cart-link" to="/cart" aria-label={`Cart, ${count} items`}>
-      <span aria-hidden="true">🛒</span> Cart <span className="cart-badge">{count}</span>
-    </Link></div>
+    <button className="brand nav-brand" type="button" onClick={onHomeClick}>Paradise Nursery<small>Grow at home</small></button>
+    <div className="nav-links"><button type="button" onClick={onHomeClick}>Home</button><button type="button" onClick={onPlantsClick}>Plants</button><button className="cart-link" type="button" onClick={onCartClick} aria-label={`Cart, ${count} items`}>
+      <span aria-hidden="true">🛒</span> Cart <span id="cart_quantity_count" className="cart-badge cart_quantity_count">{count}</span>
+    </button></div>
   </nav>;
 }
 
-export default function ProductList() {
+export default function ProductList({ onHomeClick, onPlantsClick, onCartClick }) {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.cart.items);
+  const addedToCart = useSelector(selectAddedToCart);
   return <>
-    <Navbar />
+    <Navbar onHomeClick={onHomeClick} onPlantsClick={onPlantsClick} onCartClick={onCartClick} />
     <main className="catalog">
       <div className="section-heading"><div><p className="eyebrow">Find your new favourite</p><h1>Plants for every space</h1><p>Thoughtfully chosen greens, ready to make themselves at home.</p></div></div>
       {categories.map(({ name, plants }) => <section className="category" key={name} aria-label={name}>
         <h2 className="category-heading">{name}</h2>
-        <div className="plant-grid">
-          {plants.map(([id, title, price, description, image]) => {
-            const added = items.some((item) => item.id === id);
+        <div className="product-list">
+          {plants.map(([id, title, cost, description, image]) => {
+            const added = addedToCart[title];
+            const imageUrl = `https://images.unsplash.com/${image}?auto=format&fit=crop&w=750&q=80`;
             return <article className="plant-card" key={id}>
-              <img src={`https://images.unsplash.com/${image}?auto=format&fit=crop&w=750&q=80`} alt={title} loading="lazy" />
+              <img src={imageUrl} alt={title} loading="lazy" />
               <div className="plant-info"><h3>{title}</h3><p>{description}</p>
-                <div className="plant-bottom"><span className="price">${price.toFixed(2)}</span>
-                  <button className="button button-green" type="button" disabled={added}
-                    onClick={() => dispatch(addToCart({ id, name: title, price, image: `https://images.unsplash.com/${image}?auto=format&fit=crop&w=750&q=80` }))}>
-                    {added ? 'Added' : 'Add to Cart'}
+                <div className="plant-bottom"><span className="price">${cost.toFixed(2)}</span>
+                  <button className="button button-green" type="button" disabled={addedToCart[title]}
+                    onClick={() => dispatch(addItem({ id, name: title, cost, image: imageUrl }))}>
+                    {added ? 'Added to Cart' : 'Add to Cart'}
                   </button>
                 </div>
               </div>
