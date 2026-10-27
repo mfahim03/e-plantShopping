@@ -1,6 +1,6 @@
-# Paradise Nursery
+# Paradise Nursery — e-plantShopping Final Project
 
-Paradise Nursery is a responsive plant shop demo built with React, React Router, and Redux Toolkit. Browse houseplants by category, add plants to a shared cart, adjust quantities, and review the order total.
+Project name: Paradise Nursery. Repository assignment: e-plantShopping. Paradise Nursery is a responsive plant shop demo built with React, React Router, and Redux Toolkit. Browse houseplants by category, add plants to a shared cart, adjust quantities, and review the order total.
 
 ## Getting started
 
